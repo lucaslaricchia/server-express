@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  database:
+    image: postgres
+    container_name: ${DB_HOST}
+    restart: always
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DATABASE}
+    volumes:
+      - pgdata:/data/postgres
+  app:
+    build: .
+    container_name: server
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - .:/usr/app
+      - /usr/app/node_modules/bcrypt/
+    links:
+      - database
+    depends_on:
+      - database
+
+volumes:
+  pgdata:
+    driver: local
